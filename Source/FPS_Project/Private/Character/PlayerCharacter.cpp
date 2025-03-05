@@ -2,6 +2,9 @@
 #include "Character/PlayerCharacter.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
+#include "EnhancedInputSubsystems.h"
+#include "EnhancedInputComponent.h"
+#include "InputActionValue.h"
 
 APlayerCharacter::APlayerCharacter()
 {
@@ -21,18 +24,12 @@ APlayerCharacter::APlayerCharacter()
 void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 }
 
-void APlayerCharacter::Tick(float DeltaTime)
+void APlayerCharacter::Look(const FInputActionValue& Value)
 {
-	Super::Tick(DeltaTime);
-
+	FVector2D LookAxisVector = Value.Get<FVector2D>();
+	AddControllerYawInput(LookAxisVector.X);
+	AddControllerPitchInput(LookAxisVector.Y);
 }
-
-void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
-}
-
