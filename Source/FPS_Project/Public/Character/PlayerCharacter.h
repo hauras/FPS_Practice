@@ -14,8 +14,11 @@ class FPS_PROJECT_API APlayerCharacter : public ACharacter
 public:
 
 	APlayerCharacter();
-
+	virtual void Tick(float DeltaTime) override;
 	void Look(const FInputActionValue& Value);
+
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const  override;
+	virtual void PostInitializeComponents() override;
 
 protected:
 	virtual void BeginPlay() override;
@@ -28,8 +31,15 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Camera")
 	class UCameraComponent* FollowCamera;
 
+	UPROPERTY(ReplicatedUsing = OnRep_OverlappingWeapon)
+	class AWeapon* OverlappingWeapon;
 
-public:	
-	
+	UFUNCTION()
+	void OnRep_OverlappingWeapon(AWeapon* LastWeapon);
+
+	UPROPERTY(VisibleAnywhere)
+	class UCombatComponent* Combat;
+public:
+	void SetOverlappingWeapon(AWeapon* Weapon);
 
 };

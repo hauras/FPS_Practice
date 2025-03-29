@@ -15,13 +15,25 @@ AFPSController::AFPSController()
 
 void AFPSController::BeginPlay()
 {
-	Super::BeginPlay();
-	check(InputContext);
+    Super::BeginPlay();
 
-	UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer());
-	check(Subsystem);
-	Subsystem->AddMappingContext(InputContext, 0);
+    if (!IsLocalController())  // 서버 사이드라면 조기 탈출
+    {
+        return;
+    }
+
+    check(InputContext);
+
+    if (ULocalPlayer* LocalPlayer = GetLocalPlayer())
+    {
+        UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(LocalPlayer);
+        if (Subsystem)
+        {
+            Subsystem->AddMappingContext(InputContext, 0);
+        }
+    }
 }
+
 
 void AFPSController::SetupInputComponent()
 {
@@ -32,7 +44,7 @@ void AFPSController::SetupInputComponent()
     EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AFPSController::Move);
     EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AFPSController::Look);
     EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &AFPSController::Jump);
-
+    EnhancedInputComponent->BindAction(EquipAction, ETriggerEvent::Triggered, this, &AFPSController::Equip);
 }
 
 void AFPSController::Move(const FInputActionValue& Value)
@@ -69,4 +81,9 @@ void AFPSController::Jump()
             MyCharacter->Jump();
         }
     }
+}
+
+void AFPSController::Equip(const FInputActionValue& Value)
+{
+
 }
